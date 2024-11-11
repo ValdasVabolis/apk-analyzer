@@ -6,7 +6,6 @@ public class Main {
             System.out.println("Usage: java Main <path_to_decoded_apk>");
             return;
         }
-
         String decodedApkPath = args[0];
         try {
             UnusedPermissionsDetector detector = new UnusedPermissionsDetector(decodedApkPath);
