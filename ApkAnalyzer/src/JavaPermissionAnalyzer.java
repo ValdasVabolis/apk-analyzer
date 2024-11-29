@@ -36,7 +36,8 @@ public class JavaPermissionAnalyzer {
         return result;
     }
 
-    public static List<Permission> analyzePermissionsFromFile(String filePath, List<String> permissions) throws IOException {
+    public static List<Permission> analyzePermissionsFromFile(String filePath, List<String> permissions)
+            throws IOException {
         StringBuilder javaCode = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
