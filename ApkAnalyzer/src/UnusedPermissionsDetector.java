@@ -17,7 +17,7 @@ import java.io.IOException;
 public class UnusedPermissionsDetector {
     private final String decodedApkPath;
     private BasicManifestInfo info;
-    private Set<String> usedMethods = new HashSet<>();
+    private final Set<String> usedMethods = new HashSet<>();
 
     public UnusedPermissionsDetector(String decodedApkPath) {
         this.decodedApkPath = decodedApkPath;
@@ -51,9 +51,7 @@ public class UnusedPermissionsDetector {
             Set<String> commonMethods = new HashSet<>(usedMethods);
             commonMethods.retainAll(permissionMappings.keySet());
             for (String method : commonMethods) {
-                for (String permission : permissionMappings.get(method)) {
-                    usedPermissions.add(permission);
-                }
+                usedPermissions.addAll(permissionMappings.get(method));
             }
         } catch (Exception e) {
             e.printStackTrace();
