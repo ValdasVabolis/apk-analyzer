@@ -5,8 +5,11 @@ import java.util.Set;
 
 import helpers.SdkVersionScanner;
 import model.BasicManifestInfo;
+import model.SmaliPermissionUsage;
 import parsers.ManifestParser;
 import parsers.PermissionMappingParser;
+import parsers.SmaliStaticAnalyzer;
+
 import java.util.List;
 import java.util.Map;
 import java.io.BufferedReader;
@@ -18,6 +21,9 @@ public class UnusedPermissionsDetector {
     private final String decodedApkPath;
     private BasicManifestInfo info;
     private final Set<String> usedMethods = new HashSet<>();
+    Map<String, List<String>> permissionMappingsResolved = new HashMap<>();
+
+    private SmaliStaticAnalyzer smaliStaticAnalyzer;
 
     public UnusedPermissionsDetector(String decodedApkPath) {
         this.decodedApkPath = decodedApkPath;
@@ -31,6 +37,7 @@ public class UnusedPermissionsDetector {
             Set<String> usedPermissions = extractUsedPermissions();
             manifestPermissions.removeAll(usedPermissions);
 
+            System.out.println();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,6 +54,8 @@ public class UnusedPermissionsDetector {
             Map<String, List<String>> permissionMappings = transformJsonKeys(
                     PermissionMappingParser.parse(selectVersion(supportedVersions, info.getMinSdkVersion(),
                             info.getMaxSdkVersion(), info.getTargetSdkVersion())));
+            permissionMappingsResolved = permissionMappings;
+            smaliStaticAnalyzer = new SmaliStaticAnalyzer(permissionMappingsResolved);
             scanDirectory(new File(decodedApkPath + "/smali"));
             Set<String> commonMethods = new HashSet<>(usedMethods);
             commonMethods.retainAll(permissionMappings.keySet());
@@ -59,7 +68,6 @@ public class UnusedPermissionsDetector {
         }
 
         return usedPermissions;
-
     }
 
     private int selectVersion(List<Integer> availableSdkVersions, int minSdkVersion, int maxSdkVersion,
@@ -118,18 +126,30 @@ public class UnusedPermissionsDetector {
     }
 
     private void scanSmaliFile(File smaliFile) throws IOException {
+        String className = SmaliStaticAnalyzer.extractClassName(smaliFile);
         try (BufferedReader reader = new BufferedReader(new FileReader(smaliFile))) {
             String line;
+            int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
+                lineNumber++;
                 if (line.startsWith("invoke-")) {
                     String[] parts = line.split(",");
                     if (parts.length > 1) {
                         String method = parts[parts.length - 1].trim();
                         usedMethods.add(method);
+                        smaliStaticAnalyzer.addEntry(parts, className, lineNumber);
                     }
                 }
             }
         }
+    }
+
+    public Set<String> getUsedMethods() {
+        return usedMethods;
+    }
+
+    public List<SmaliPermissionUsage> getStaticAnalysisResults() {
+        return smaliStaticAnalyzer.getResults();
     }
 }
