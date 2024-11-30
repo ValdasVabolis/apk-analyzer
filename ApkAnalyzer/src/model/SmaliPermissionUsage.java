@@ -5,12 +5,14 @@ public class SmaliPermissionUsage {
     private final String methodName;
     private final int lineNumber;
     private final String permissionType;
+    private final String smaliPermission;
 
-    public SmaliPermissionUsage(String className, String methodName, int lineNumber, String permissionType) {
+    public SmaliPermissionUsage(String className, String methodName, int lineNumber, String permissionType, String smaliPermission) {
         this.className = className;
         this.methodName = methodName;
         this.lineNumber = lineNumber;
         this.permissionType = permissionType;
+        this.smaliPermission = smaliPermission;
     }
 
     public String getClassName() {
@@ -31,6 +33,19 @@ public class SmaliPermissionUsage {
 
     @Override
     public String toString() {
-        return "Class: " + className + ", Method: " + methodName + ", Line: " + lineNumber + ", Permission: " + permissionType;
+        return String.format(
+            "----------------------------------------%n" +
+                    "Class:               %s%n" +
+                    "Method:              %s%n" +
+                    "Line:                %d%n" +
+                    "Permission:          %s%n" +
+                    "Permission in Smali: %s%n" +
+            "----------------------------------------",
+            className,
+            methodName,
+            lineNumber,
+            permissionType,
+            smaliPermission
+        );
     }
 }

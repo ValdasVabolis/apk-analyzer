@@ -20,7 +20,7 @@ public class SmaliStaticAnalyzer {
         if (permissionMappings.containsKey(methodCall)) {
             String permissionType = String.valueOf(permissionMappings.get(methodCall));
             String methodName = extractMethodName(methodCall);
-            results.add(new SmaliPermissionUsage(className, methodName, lineNumber, permissionType));
+            results.add(new SmaliPermissionUsage(className, methodName, lineNumber, permissionType, methodCall));
         }
     }
 
