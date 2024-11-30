@@ -9,16 +9,12 @@ public class Main {
             return;
         }
         String decodedApkPath = args[0];
-        try {
-            UnusedPermissionsDetector detector = new UnusedPermissionsDetector(decodedApkPath);
-            Set<String> unusedPermissions = detector.detectUnusedPermissions();
+        UnusedPermissionsDetector detector = new UnusedPermissionsDetector(decodedApkPath);
+        Set<String> unusedPermissions = detector.detectUnusedPermissions();
 
-            System.out.println("Unused Permissions: ");
-            unusedPermissions.forEach(System.out::println);
-            System.out.println("Static analysis: ");
-            detector.getStaticAnalysisResults().forEach(r -> System.out.println(r.toString()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.println("Unused Permissions: ");
+        unusedPermissions.forEach(System.out::println);
+        System.out.println("Static analysis: ");
+        detector.getStaticAnalysisResults().forEach(System.out::println);
     }
 }
