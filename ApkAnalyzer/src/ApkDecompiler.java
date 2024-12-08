@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.function.Consumer;
 
-class ApkDecompiler {
+public class ApkDecompiler {
 
     private static class StreamGobbler implements Runnable {
         private InputStream inputStream;
@@ -23,7 +23,7 @@ class ApkDecompiler {
         }
     }
 
-    public static void main(String[] args) {
+    public static String Decompile() {
         boolean isWindows = System.getProperty("os.name")
                 .toLowerCase().startsWith("windows");
 
@@ -67,7 +67,8 @@ class ApkDecompiler {
                     e.printStackTrace();
                 }
             }
+            System.out.println("APK successfully decompiled.");
+            return outputDir;
         }
-        System.out.println("APK successfully decompiled.");
     }
 }
