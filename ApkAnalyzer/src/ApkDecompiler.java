@@ -43,7 +43,7 @@ public class ApkDecompiler {
             if (isWindows) {
                 try {
                     process = Runtime.getRuntime()
-                            .exec(String.format("cmd.exe /c start apktool d %s -o %s -f", inputPath, outputDir));
+                            .exec(String.format("cmd.exe /c start /wait apktool d %s -o %s -f", inputPath, outputDir));
                     StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
                     try {
                         process.waitFor();
